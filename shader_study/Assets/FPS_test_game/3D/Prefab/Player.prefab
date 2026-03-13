@@ -460,11 +460,16 @@ MonoBehaviour:
   - {x: -0.43, y: 1.35}
   - {x: 0.9, y: 1.45}
   - {x: 0.59, y: 1.56}
+  - {x: 1.12, y: 1.6}
+  - {x: 1.25, y: 1.7}
+  - {x: 0.85, y: 1.8}
+  - {x: 1.25, y: 1.9}
+  - {x: 1, y: 2}
   muzzleFlash: {fileID: 7355628158602509286}
   tracer: {fileID: 1365964843220081869, guid: 08a2f0c5ceb39e24a9ac7dcb3cb1f839, type: 3}
   hitEffect: {fileID: 2804828067949532436, guid: 4d8634795bf6ffe4bb0389b7bb4da73e, type: 3}
   bulletHole: {fileID: 1702143330849917998, guid: 9c09f9b41f95c324788fc522bec42c0e, type: 3}
-  maxBulletHoles: 20
+  maxBulletHoles: 50
 --- !u!4 &5434725036589295241 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4222897402944752997, guid: a82ede144339d1b49801a42be7325220, type: 3}
