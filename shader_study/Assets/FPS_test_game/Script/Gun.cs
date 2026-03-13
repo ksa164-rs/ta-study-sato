@@ -1,6 +1,6 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 
 public class Gun : MonoBehaviour
 {
@@ -25,6 +25,17 @@ public class Gun : MonoBehaviour
     [SerializeField] FireMode fireMode = FireMode.Auto;
     [SerializeField] float fireRate = 10f;
     [SerializeField] float range = 100f;
+
+    /* =============================
+     * Ammo
+     * =============================*/
+    [Header("Ammo")]
+    [SerializeField] int magazineSize = 30;
+    [SerializeField] int currentAmmo;
+    [SerializeField] int reserveAmmo = 90;
+    [SerializeField] float reloadTime = 2f;
+
+    bool isReloading;
 
     /* =============================
      * Bloom
@@ -69,6 +80,11 @@ public class Gun : MonoBehaviour
 
     Queue<GameObject> bulletHoles = new Queue<GameObject>();
 
+    void Start()
+    {
+        currentAmmo = magazineSize;
+    }
+
     void Update()
     {
         HandleShootInput();
@@ -77,6 +93,11 @@ public class Gun : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             ResetRecoil();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reload();
         }
     }
 
@@ -104,21 +125,67 @@ public class Gun : MonoBehaviour
      * =============================*/
     void TryShoot()
     {
+        if (isReloading)
+            return;
+
+        if (currentAmmo <= 0)
+        {
+            Reload();
+            return;
+        }
+
         if (Time.time < nextFireTime)
             return;
 
         nextFireTime = Time.time + 1f / fireRate;
+
         Shoot();
     }
 
     void Shoot()
     {
+        ConsumeAmmo();
         ApplyRecoil();
+        ApplyBloom();
 
-        bloom = Mathf.Min(bloom + bloomIncrease, bloomMax);
+        Vector3 hitPoint = FireRay();
 
-        FireRay();
-        PlayMuzzleFlash();
+        PlayShootEffects(hitPoint);
+    }
+
+    /* =============================
+     * Ammo
+     * =============================*/
+    void ConsumeAmmo()
+    {
+        currentAmmo--;
+    }
+
+    /* =============================
+     * Reload
+     * =============================*/
+    void Reload()
+    {
+        if (isReloading) return;
+        if (currentAmmo == magazineSize) return;
+        if (reserveAmmo <= 0) return;
+
+        StartCoroutine(ReloadRoutine());
+    }
+
+    IEnumerator ReloadRoutine()
+    {
+        isReloading = true;
+
+        yield return new WaitForSeconds(reloadTime);
+
+        int neededAmmo = magazineSize - currentAmmo;
+        int ammoToReload = Mathf.Min(neededAmmo, reserveAmmo);
+
+        currentAmmo += ammoToReload;
+        reserveAmmo -= ammoToReload;
+
+        isReloading = false;
     }
 
     /* =============================
@@ -144,6 +211,11 @@ public class Gun : MonoBehaviour
     /* =============================
      * Bloom
      * =============================*/
+    void ApplyBloom()
+    {
+        bloom = Mathf.Min(bloom + bloomIncrease, bloomMax);
+    }
+
     void RecoverBloom()
     {
         bloom = Mathf.MoveTowards(
@@ -156,7 +228,7 @@ public class Gun : MonoBehaviour
     /* =============================
      * Raycast
      * =============================*/
-    void FireRay()
+    Vector3 FireRay()
     {
         Vector3 viewport = new Vector3(
             0.5f + Random.Range(-bloom, bloom) * 0.01f,
@@ -185,15 +257,10 @@ public class Gun : MonoBehaviour
 
         Debug.DrawRay(muzzleRay.origin, muzzleRay.direction * range, Color.red, 1f);
 
-        Vector3 endPoint;
-
         if (Physics.Raycast(muzzleRay, out hit, range))
         {
-            endPoint = hit.point;
-
             SpawnHitEffect(hit);
 
-            // ===== 敵なら弾痕を作らない =====
             Target target = hit.collider.GetComponentInParent<Target>();
 
             if (target != null)
@@ -204,18 +271,22 @@ public class Gun : MonoBehaviour
             {
                 SpawnBulletHole(hit);
             }
-        }
-        else
-        {
-            endPoint = muzzleRay.origin + muzzleRay.direction * range;
+
+            return hit.point;
         }
 
-        SpawnTracer(endPoint);
+        return muzzleRay.origin + muzzleRay.direction * range;
     }
 
     /* =============================
      * Effects
      * =============================*/
+    void PlayShootEffects(Vector3 endPoint)
+    {
+        PlayMuzzleFlash();
+        SpawnTracer(endPoint);
+    }
+
     void PlayMuzzleFlash()
     {
         if (muzzleFlash == null || muzzlePoint == null)
