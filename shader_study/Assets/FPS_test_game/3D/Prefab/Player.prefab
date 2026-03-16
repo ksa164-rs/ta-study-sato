@@ -320,6 +320,8 @@ MonoBehaviour:
   runSpeed: 6.8
   jumpForce: 4
   gravity: -60
+  fallDeathY: -20
+  respawnPoint: {fileID: 7737286075436029033, guid: 6fd199a14e3ca09419cb015b65f68e38, type: 3}
 --- !u!1 &7355628158602509286
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,7 +347,7 @@ Transform:
   m_GameObject: {fileID: 7355628158602509286}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0.098, z: 0.462}
+  m_LocalPosition: {x: 0.001, y: 0.097, z: 0.517}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -464,7 +466,6 @@ MonoBehaviour:
   fireMode: 1
   fireRate: 9
   range: 100
-  bloom: 0
   bloomIncrease: 0.15
   bloomMax: 1
   bloomRecovery: 3

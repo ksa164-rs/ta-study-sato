@@ -17,8 +17,7 @@ public class GunEffects : MonoBehaviour
     [Header("Bullet Holes")]
     [SerializeField] int maxBulletHoles = 50;
 
-    Queue<GameObject> bulletHoles =
-        new Queue<GameObject>();
+    Queue<GameObject> bulletHoles = new Queue<GameObject>();
 
     public void PlayMuzzleFlash()
     {
@@ -29,10 +28,11 @@ public class GunEffects : MonoBehaviour
             Instantiate(
                 muzzleFlash,
                 muzzlePoint.position,
-                muzzlePoint.rotation
+                muzzlePoint.rotation,
+                muzzlePoint   // ←ここが重要
             );
 
-        Destroy(flash, 0.2f);
+        Destroy(flash, 0.05f);
     }
 
     public void SpawnTracer(Vector3 endPoint)
@@ -40,20 +40,15 @@ public class GunEffects : MonoBehaviour
         if (tracer == null)
             return;
 
-        GameObject tracerObj =
-            Instantiate(
-                tracer,
-                muzzlePoint.position,
-                Quaternion.identity
-            );
+        Vector3 startPos = muzzlePoint.position;
 
-        Tracer tracerComponent =
-            tracerObj.GetComponent<Tracer>();
+        GameObject tracerObj = Instantiate(tracer);
+
+        GunTracer tracerComponent =
+            tracerObj.GetComponent<GunTracer>();
 
         if (tracerComponent != null)
-            tracerComponent.Init(endPoint);
-
-        Destroy(tracerObj, 1f);
+            tracerComponent.Init(startPos, endPoint);
     }
 
     public void SpawnHitEffect(RaycastHit hit)

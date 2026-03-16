@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8971626384262614400}
   - component: {fileID: 6727302181114518335}
   - component: {fileID: 1301018032059049997}
-  - component: {fileID: 2899541900901652276}
+  - component: {fileID: 4117643047419053636}
   m_Layer: 0
   m_Name: Tracer
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 1365964843220081869}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.83889, y: 0.67529, z: 1.4443}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.029289002, y: 0.29289, z: 0.029289002}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -100,9 +100,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb15a60e38d5e344d9ce0ba164db9966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!96 &2899541900901652276
-TrailRenderer:
-  serializedVersion: 3
+--- !u!120 &4117643047419053636
+LineRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -124,7 +124,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 52547edcc7ccacc448b2f2ccbf12b072, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -145,8 +145,9 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.1
-  m_PreviewTimeScale: 1
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.2
@@ -157,17 +158,17 @@ TrailRenderer:
         time: 0
         value: 1
         inSlope: 0
-        outSlope: 0
-        tangentMode: 0
+        outSlope: -1
+        tangentMode: 69
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
         value: 0
-        inSlope: 0
+        inSlope: -1
         outSlope: 0
-        tangentMode: 0
+        tangentMode: 69
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -206,13 +207,12 @@ TrailRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 0
+    alignment: 1
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
   m_MaskInteraction: 0
-  m_Autodestruct: 0
-  m_Emitting: 1
+  m_UseWorldSpace: 1
+  m_Loop: 0
   m_ApplyActiveColorSpace: 1
