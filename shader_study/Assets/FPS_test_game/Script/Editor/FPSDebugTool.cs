@@ -9,7 +9,7 @@ public class FPSDebugTool : EditorWindow
 
     bool infiniteAmmo;
 
-    GunAmmo gun;   // キャッシュ
+    GunAmmo gun;
 
     [MenuItem("Tools/FPS Debug Tool")]
     static void OpenWindow()
@@ -22,9 +22,13 @@ public class FPSDebugTool : EditorWindow
         FindGunIfNeeded();
 
         DrawEnemySection();
+
         GUILayout.Space(10);
+
         DrawPlayerSection();
+
         GUILayout.Space(10);
+
         DrawEnemyUtility();
     }
 
@@ -39,7 +43,7 @@ public class FPSDebugTool : EditorWindow
     }
 
     /* =============================
-     * UI Sections
+     * UI
      * =============================*/
 
     void DrawEnemySection()
@@ -62,6 +66,11 @@ public class FPSDebugTool : EditorWindow
         {
             SpawnEnemy();
         }
+
+        if (GUILayout.Button("Spawn Enemy Random"))
+        {
+            SpawnEnemyRandom();
+        }
     }
 
     void DrawPlayerSection()
@@ -78,6 +87,8 @@ public class FPSDebugTool : EditorWindow
 
     void DrawEnemyUtility()
     {
+        GUILayout.Label("Enemy Utility", EditorStyles.boldLabel);
+
         if (GUILayout.Button("Delete All Enemies"))
         {
             DeleteEnemies();
@@ -85,7 +96,7 @@ public class FPSDebugTool : EditorWindow
     }
 
     /* =============================
-     * Functions
+     * Enemy Functions
      * =============================*/
 
     void SpawnEnemy()
@@ -104,16 +115,26 @@ public class FPSDebugTool : EditorWindow
         enemy.transform.rotation = Quaternion.identity;
     }
 
-    void ApplyAmmoSetting()
+    void SpawnEnemyRandom()
     {
-        if (gun == null)
+        if (enemyPrefab == null)
         {
-            Debug.LogWarning("GunAmmo not found in scene.");
+            Debug.LogWarning("EnemyPrefab is missing.");
             return;
         }
 
-        gun.SetInfiniteAmmo(infiniteAmmo);
-        Debug.Log("Infinite Ammo: " + infiniteAmmo);
+        Vector3 randomPos = new Vector3(
+            Random.Range(-10f, 10f),
+            0,
+            Random.Range(-10f, 10f)
+        );
+
+        GameObject enemy = (GameObject)PrefabUtility.InstantiatePrefab(enemyPrefab);
+
+        Undo.RegisterCreatedObjectUndo(enemy, "Spawn Enemy Random");
+
+        enemy.transform.position = randomPos;
+        enemy.transform.rotation = Quaternion.identity;
     }
 
     void DeleteEnemies()
@@ -126,6 +147,23 @@ public class FPSDebugTool : EditorWindow
         }
 
         Debug.Log("All enemies deleted");
+    }
+
+    /* =============================
+     * Player Functions
+     * =============================*/
+
+    void ApplyAmmoSetting()
+    {
+        if (gun == null)
+        {
+            Debug.LogWarning("GunAmmo not found in scene.");
+            return;
+        }
+
+        gun.SetInfiniteAmmo(infiniteAmmo);
+
+        Debug.Log("Infinite Ammo: " + infiniteAmmo);
     }
 }
 #endif

@@ -69,4 +69,17 @@ public class GunAmmo : MonoBehaviour
     {
         infiniteAmmo = value;
     }
+    public int GetCurrentAmmo()
+    {
+        return currentAmmo;
+    }
+
+    public int GetReserveAmmo()
+    {
+        return reserveAmmo;
+    }
+    public bool IsReloading()
+    {
+        return isReloading;
+    }
 }

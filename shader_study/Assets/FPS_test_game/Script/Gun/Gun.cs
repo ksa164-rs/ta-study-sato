@@ -27,12 +27,30 @@ public class Gun : MonoBehaviour
     [SerializeField] float range = 100f;
 
     [Header("Bloom")]
-    [SerializeField] float bloom;
+    float bloom;
     [SerializeField] float bloomIncrease = 0.15f;
     [SerializeField] float bloomMax = 1.2f;
     [SerializeField] float bloomRecovery = 3f;
 
     float nextFireTime;
+
+    void Awake()
+    {
+        if (cam == null)
+            cam = Camera.main;
+
+        if (ammo == null)
+            Debug.LogError("GunAmmo is missing", this);
+
+        if (recoil == null)
+            Debug.LogError("GunRecoil is missing", this);
+
+        if (raycastSystem == null)
+            Debug.LogError("GunRaycast is missing", this);
+
+        if (effects == null)
+            Debug.LogError("GunEffects is missing", this);
+    }
 
     void Update()
     {
@@ -66,7 +84,9 @@ public class Gun : MonoBehaviour
     {
         if (!ammo.CanShoot())
         {
+        if (!ammo.IsReloading())
             ammo.Reload();
+
             return;
         }
 
@@ -110,5 +130,14 @@ public class Gun : MonoBehaviour
             0f,
             bloomRecovery * Time.deltaTime
         );
+    }
+    public int GetCurrentAmmo()
+    {
+        return ammo.GetCurrentAmmo();
+    }
+
+    public int GetReserveAmmo()
+    {
+        return ammo.GetReserveAmmo();
     }
 }

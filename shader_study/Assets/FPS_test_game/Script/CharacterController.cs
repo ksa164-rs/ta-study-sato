@@ -10,6 +10,11 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float jumpForce = 6f;
     [SerializeField] float gravity = -30f;
 
+    [Header("Fall Death")]
+    [SerializeField] float fallDeathY = -20f;
+
+    [SerializeField] Transform respawnPoint;
+
     Vector3 velocity;
     Vector3 horizontalVelocity;
 
@@ -22,6 +27,8 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        CheckFallDeath();
+
         isGrounded = controller.isGrounded;
 
         if (isGrounded && velocity.y < 0)
@@ -57,5 +64,27 @@ public class PlayerMove : MonoBehaviour
         Vector3 finalMove = horizontalVelocity + velocity;
 
         controller.Move(finalMove * Time.deltaTime);
+    }
+
+    void CheckFallDeath()
+    {
+        if (transform.position.y < fallDeathY)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        controller.enabled = false;
+
+        Vector3 respawnPos = respawnPoint.position;
+        respawnPos.y += 2f;   // ←ここで高さを追加
+
+        transform.position = respawnPos;
+
+        velocity = Vector3.zero;
+
+        controller.enabled = true;
     }
 }
