@@ -425,6 +425,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8239195622578066759, guid: a82ede144339d1b49801a42be7325220, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4871996020340488215}
+    - targetCorrespondingSourceObject: {fileID: 8239195622578066759, guid: a82ede144339d1b49801a42be7325220, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4685804065747968981}
+    - targetCorrespondingSourceObject: {fileID: 8239195622578066759, guid: a82ede144339d1b49801a42be7325220, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6632228975544144457}
+    - targetCorrespondingSourceObject: {fileID: 8239195622578066759, guid: a82ede144339d1b49801a42be7325220, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5129473168939744272}
+    - targetCorrespondingSourceObject: {fileID: 8239195622578066759, guid: a82ede144339d1b49801a42be7325220, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 630837638082276086}
   m_SourcePrefab: {fileID: 100100000, guid: a82ede144339d1b49801a42be7325220, type: 3}
 --- !u!1 &261555896807243435 stripped
 GameObject:
@@ -444,32 +456,84 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 165556809635145242}
-  camLook: {fileID: 1383652124575541746}
   muzzlePoint: {fileID: 1597149729542257046}
+  ammo: {fileID: 4685804065747968981}
+  recoil: {fileID: 630837638082276086}
+  raycastSystem: {fileID: 5129473168939744272}
+  effects: {fileID: 6632228975544144457}
   fireMode: 1
-  fireRate: 8
+  fireRate: 9
   range: 100
   bloom: 0
   bloomIncrease: 0.15
-  bloomMax: 1.2
+  bloomMax: 1
   bloomRecovery: 3
-  recoilPattern:
-  - {x: 0.8, y: 1}
-  - {x: -0.45, y: 1.2}
-  - {x: 0.37, y: 1.3}
-  - {x: -0.43, y: 1.35}
-  - {x: 0.9, y: 1.45}
-  - {x: 0.59, y: 1.56}
-  - {x: 1.12, y: 1.6}
-  - {x: 1.25, y: 1.7}
-  - {x: 0.85, y: 1.8}
-  - {x: 1.25, y: 1.9}
-  - {x: 1, y: 2}
-  muzzleFlash: {fileID: 7355628158602509286}
+--- !u!114 &4685804065747968981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261555896807243435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394ed86d07a004d47bea6b3def99661c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magazineSize: 30
+  currentAmmo: 0
+  reserveAmmo: 90
+  reloadTime: 2
+--- !u!114 &6632228975544144457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261555896807243435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9918f864be35dc5459936adc133a552e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  muzzlePoint: {fileID: 1597149729542257046}
+  muzzleFlash: {fileID: 7748693253961199337, guid: cfdad11bb312e5e4cb2d4626f19c0180, type: 3}
   tracer: {fileID: 1365964843220081869, guid: 08a2f0c5ceb39e24a9ac7dcb3cb1f839, type: 3}
   hitEffect: {fileID: 2804828067949532436, guid: 4d8634795bf6ffe4bb0389b7bb4da73e, type: 3}
   bulletHole: {fileID: 1702143330849917998, guid: 9c09f9b41f95c324788fc522bec42c0e, type: 3}
   maxBulletHoles: 50
+--- !u!114 &5129473168939744272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261555896807243435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04e5c3528f475d74b8e04365ed70658d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &630837638082276086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 261555896807243435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc858c6a0cfdc54aaee128d72662dd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camLook: {fileID: 1383652124575541746}
+  recoilPattern:
+  - {x: 0.08, y: 0.65}
+  - {x: -0.06, y: 0.75}
+  - {x: 0.1, y: 0.85}
+  - {x: -0.08, y: 0.95}
+  - {x: 0.12, y: 1}
+  - {x: -0.1, y: 1.05}
 --- !u!4 &5434725036589295241 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4222897402944752997, guid: a82ede144339d1b49801a42be7325220, type: 3}
