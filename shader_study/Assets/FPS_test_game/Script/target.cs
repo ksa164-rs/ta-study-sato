@@ -2,25 +2,32 @@ using UnityEngine;
 
 public class Target : MonoBehaviour
 {
-    [SerializeField] int maxHealth = 3;
-    int health;
+    [SerializeField] int maxHP = 3;
+    int currentHP;
 
-    EnemyHPUI hpUI;
+    [SerializeField] EnemyHPUI hpUI;
 
     void Start()
     {
-        health = maxHealth;
-        hpUI = GetComponentInChildren<EnemyHPUI>();
+        currentHP = maxHP;
+
+        if (hpUI != null)
+            hpUI.SetMaxHP(maxHP);
+            hpUI.UpdateHP(currentHP);
     }
 
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        Debug.Log("ダメージ入った");
 
-        float percent = (float)health / maxHealth;
-        hpUI.UpdateHP(percent);
+        currentHP -= damage;
 
-        if (health <= 0)
+        Debug.Log("現在HP: " + currentHP);
+
+        if (hpUI != null)
+            hpUI.UpdateHP(currentHP);
+
+        if (currentHP <= 0)
         {
             Die();
         }
@@ -28,6 +35,7 @@ public class Target : MonoBehaviour
 
     void Die()
     {
+        Debug.Log("DEAD");
         Destroy(gameObject);
     }
 }

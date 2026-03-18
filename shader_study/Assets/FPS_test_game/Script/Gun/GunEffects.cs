@@ -21,31 +21,42 @@ public class GunEffects : MonoBehaviour
 
     public void PlayMuzzleFlash()
     {
-        if (muzzleFlash == null)
+        if (muzzleFlash == null || muzzlePoint == null)
             return;
 
-        GameObject flash =
-            Instantiate(
-                muzzleFlash,
-                muzzlePoint.position,
-                muzzlePoint.rotation,
-                muzzlePoint   // ←ここが重要
-            );
+        GameObject flash = Instantiate(
+            muzzleFlash,
+            muzzlePoint.position,
+            muzzlePoint.rotation,
+            muzzlePoint
+        );
 
         Destroy(flash, 0.05f);
     }
 
     public void SpawnTracer(Vector3 endPoint)
     {
-        if (tracer == null)
+        if (tracer == null || muzzlePoint == null)
             return;
 
         Vector3 startPos = muzzlePoint.position;
 
         GameObject tracerObj = Instantiate(tracer);
 
-        GunTracer tracerComponent =
-            tracerObj.GetComponent<GunTracer>();
+        TracerEffect tracerComponent = tracerObj.GetComponent<TracerEffect>();
+
+        if (tracerComponent != null)
+            tracerComponent.Init(startPos, endPoint);
+    }
+
+    public void SpawnTracerFrom(Vector3 startPos, Vector3 endPoint)
+    {
+        if (tracer == null)
+            return;
+
+        GameObject tracerObj = Instantiate(tracer);
+
+        TracerEffect tracerComponent = tracerObj.GetComponent<TracerEffect>();
 
         if (tracerComponent != null)
             tracerComponent.Init(startPos, endPoint);
@@ -56,12 +67,11 @@ public class GunEffects : MonoBehaviour
         if (hitEffect == null)
             return;
 
-        GameObject effect =
-            Instantiate(
-                hitEffect,
-                hit.point,
-                Quaternion.LookRotation(hit.normal)
-            );
+        GameObject effect = Instantiate(
+            hitEffect,
+            hit.point,
+            Quaternion.LookRotation(hit.normal)
+        );
 
         Destroy(effect, 1f);
     }
@@ -71,12 +81,11 @@ public class GunEffects : MonoBehaviour
         if (bulletHole == null)
             return;
 
-        GameObject hole =
-            Instantiate(
-                bulletHole,
-                hit.point + hit.normal * 0.01f,
-                Quaternion.LookRotation(hit.normal)
-            );
+        GameObject hole = Instantiate(
+            bulletHole,
+            hit.point + hit.normal * 0.01f,
+            Quaternion.LookRotation(hit.normal)
+        );
 
         hole.transform.SetParent(hit.collider.transform);
 

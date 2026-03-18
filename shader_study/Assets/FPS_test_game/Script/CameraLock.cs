@@ -12,16 +12,13 @@ public class CameraLook : MonoBehaviour
     [SerializeField] float adsSpeed = 10f;
 
     [Header("Recoil")]
-    [SerializeField] float recoilReturnSpeed = 10f; // 目標反動が0に戻る速さ
-    [SerializeField] float recoilSnappiness = 14f;  // 現在反動が目標反動に追従する速さ
+    [SerializeField] float recoilReturnSpeed = 10f;
+    [SerializeField] float recoilSnappiness = 14f;
 
     float xRotation = 0f;
     float yRotation = 0f;
 
-    // 今フレーム実際に見た目へ反映する反動
     Vector2 currentRecoil;
-
-    // 発砲時に加算される目標反動
     Vector2 targetRecoil;
 
     void Start()
@@ -48,6 +45,7 @@ public class CameraLook : MonoBehaviour
 
         yRotation += mouseX;
 
+        // リコイル適用（上下＝X、左右＝Y）
         float finalX = xRotation - currentRecoil.x;
         float finalY = yRotation + currentRecoil.y;
 
@@ -59,16 +57,20 @@ public class CameraLook : MonoBehaviour
         }
     }
 
+    // 🔥 正しいAddRecoilはこれだけ
+    public void AddRecoil(float vertical, float horizontal)
+    {
+        targetRecoil += new Vector2(vertical, horizontal);
+    }
+
     void UpdateRecoil()
     {
-        // 目標反動を自然に0へ戻す
         targetRecoil = Vector2.Lerp(
             targetRecoil,
             Vector2.zero,
             recoilReturnSpeed * Time.deltaTime
         );
 
-        // 現在反動を目標反動へ追従させる
         currentRecoil = Vector2.Lerp(
             currentRecoil,
             targetRecoil,
@@ -107,10 +109,5 @@ public class CameraLook : MonoBehaviour
             targetFOV,
             adsSpeed * Time.deltaTime
         );
-    }
-
-    public void AddRecoil(float vertical, float horizontal)
-    {
-        targetRecoil += new Vector2(vertical, horizontal);
     }
 }

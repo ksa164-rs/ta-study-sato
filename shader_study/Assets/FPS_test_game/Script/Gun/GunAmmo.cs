@@ -1,74 +1,76 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// 弾管理
-/// </summary>
 public class GunAmmo : MonoBehaviour
 {
-    [Header("Ammo")]
+    [Header("Ammo Settings")]
     [SerializeField] int magazineSize = 30;
-    [SerializeField] int currentAmmo;
+    [SerializeField] int currentAmmo = 30;
     [SerializeField] int reserveAmmo = 90;
+
+    [Header("Reload")]
     [SerializeField] float reloadTime = 2f;
 
-    bool isReloading;
-    bool infiniteAmmo;
+    bool isReloading = false;
+    bool infiniteAmmo = false;
 
-    void Start()
-    {
-        currentAmmo = magazineSize;
-    }
-
+    // =========================
+    // 射撃可能か
+    // =========================
     public bool CanShoot()
     {
-        if (isReloading)
-            return false;
-
-        if (infiniteAmmo)
-            return true;
-
-        if (currentAmmo <= 0)
-            return false;
-
-        return true;
+        return currentAmmo > 0 && !isReloading;
     }
 
-    public void ConsumeAmmo()
+    // =========================
+    // 弾消費
+    // =========================
+    public void UseAmmo()
     {
-        if (!infiniteAmmo)
+        if (infiniteAmmo) return;
+
+        if (currentAmmo > 0)
             currentAmmo--;
     }
 
+    // =========================
+    // リロード開始
+    // =========================
     public void Reload()
     {
         if (infiniteAmmo) return;
         if (isReloading) return;
-        if (currentAmmo == magazineSize) return;
+        if (currentAmmo >= magazineSize) return;
         if (reserveAmmo <= 0) return;
 
         StartCoroutine(ReloadRoutine());
     }
 
+    // =========================
+    // リロード処理
+    // =========================
     IEnumerator ReloadRoutine()
     {
         isReloading = true;
 
+        Debug.Log("リロード開始");
+
         yield return new WaitForSeconds(reloadTime);
 
         int neededAmmo = magazineSize - currentAmmo;
-        int ammoToReload = Mathf.Min(neededAmmo, reserveAmmo);
+        int ammoToLoad = Mathf.Min(neededAmmo, reserveAmmo);
 
-        currentAmmo += ammoToReload;
-        reserveAmmo -= ammoToReload;
+        currentAmmo += ammoToLoad;
+        reserveAmmo -= ammoToLoad;
 
         isReloading = false;
+
+        Debug.Log("リロード完了");
     }
 
-    public void SetInfiniteAmmo(bool value)
-    {
-        infiniteAmmo = value;
-    }
+    // =========================
+    // UI用
+    // =========================
     public int GetCurrentAmmo()
     {
         return currentAmmo;
@@ -78,8 +80,32 @@ public class GunAmmo : MonoBehaviour
     {
         return reserveAmmo;
     }
+
+    public void SetCurrentAmmo(int value)
+    {
+        currentAmmo = Mathf.Clamp(value, 0, magazineSize);
+    }
+
+    public void SetReserveAmmo(int value)
+    {
+        reserveAmmo = Mathf.Max(0, value);
+    }
+
     public bool IsReloading()
     {
         return isReloading;
+    }
+
+    // =========================
+    // デバッグ用
+    // =========================
+    public void SetInfiniteAmmo(bool value)
+    {
+        infiniteAmmo = value;
+    }
+
+    public bool IsInfiniteAmmo()
+    {
+        return infiniteAmmo;
     }
 }

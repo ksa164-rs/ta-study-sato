@@ -2,18 +2,29 @@ using UnityEngine;
 
 public class GunTracer : MonoBehaviour
 {
-    LineRenderer line;
+    [Header("References")]
+    [SerializeField] Transform muzzlePoint;
+    [SerializeField] GameObject tracerPrefab;
 
-    void Awake()
+    public void Play()
     {
-        line = GetComponent<LineRenderer>();
-    }
+        if (tracerPrefab == null || muzzlePoint == null)
+            return;
 
-    public void Init(Vector3 start, Vector3 end)
-    {
-        line.SetPosition(0, start);
-        line.SetPosition(1, end);
+        GameObject tracerObj = Instantiate(
+            tracerPrefab,
+            muzzlePoint.position,
+            muzzlePoint.rotation
+        );
 
-        Destroy(gameObject, 0.05f);
+        TracerEffect tracer = tracerObj.GetComponent<TracerEffect>();
+
+        if (tracer != null)
+        {
+            tracer.Init(
+                muzzlePoint.position,
+                muzzlePoint.position + muzzlePoint.forward * 50f
+            );
+        }
     }
 }

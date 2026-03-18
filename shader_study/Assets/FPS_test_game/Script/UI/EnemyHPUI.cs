@@ -3,30 +3,21 @@ using UnityEngine.UI;
 
 public class EnemyHPUI : MonoBehaviour
 {
-    [SerializeField] Slider slider;
-    [SerializeField] Canvas canvas;
-    [SerializeField] float visibleTime = 3f;
+    [SerializeField] Image hpBar;
 
-    float timer;
+    int maxHP;
 
-    void Update()
+    public void SetMaxHP(int hp)
     {
-        if (canvas.enabled)
-        {
-            timer -= Time.deltaTime;
-
-            if (timer <= 0)
-            {
-                canvas.enabled = false;
-            }
-        }
+        maxHP = hp;
     }
 
-    public void UpdateHP(float percent)
+    public void UpdateHP(int currentHP)
     {
-        slider.value = percent;
+        if (hpBar == null) return;
+        if (maxHP <= 0) return; // ← 保険
 
-        canvas.enabled = true;
-        timer = visibleTime;
+        float ratio = (float)currentHP / maxHP;
+        hpBar.fillAmount = ratio;
     }
 }

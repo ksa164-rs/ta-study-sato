@@ -1,41 +1,17 @@
 using UnityEngine;
 
-/// <summary>
-/// リコイル管理
-/// </summary>
 public class GunRecoil : MonoBehaviour
 {
-    [SerializeField] CameraLook camLook;
+    [Header("Recoil Settings")]
+    [SerializeField] CameraLook cameraLook;
+    [SerializeField] float recoilX = 2f;
+    [SerializeField] float recoilY = 1f;
 
-    [SerializeField] Vector2[] recoilPattern =
+    public void AddRecoil()
     {
-        new Vector2(0.08f,0.65f),
-        new Vector2(-0.06f,0.75f),
-        new Vector2(0.10f,0.85f),
-        new Vector2(-0.08f,0.95f),
-        new Vector2(0.12f,1.0f),
-        new Vector2(-0.10f,1.05f)
-    };
-
-    int recoilIndex;
-
-    public void ApplyRecoil()
-    {
-        if (camLook == null || recoilPattern.Length == 0)
+        if (cameraLook == null)
             return;
 
-        Vector2 recoil = recoilPattern[recoilIndex];
-
-        camLook.AddRecoil(recoil.y, recoil.x);
-
-        recoilIndex = Mathf.Min(
-            recoilIndex + 1,
-            recoilPattern.Length - 1
-        );
-    }
-
-    public void ResetRecoil()
-    {
-        recoilIndex = 0;
+        cameraLook.AddRecoil(recoilX, Random.Range(-recoilY, recoilY));
     }
 }

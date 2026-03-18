@@ -1,54 +1,34 @@
 using UnityEngine;
 
-/// <summary>
-/// ヒットスキャン処理
-/// </summary>
 public class GunRaycast : MonoBehaviour
 {
-    public Vector3 Fire(
-        Camera cam,
-        Transform muzzlePoint,
-        float range,
-        float bloom,
-        GunEffects effects)
+    [SerializeField] float range = 100f;
+
+    Camera cam;
+
+    void Awake()
     {
-        Vector3 viewport = new Vector3(
-            0.5f + Random.Range(-bloom, bloom) * 0.01f,
-            0.5f + Random.Range(-bloom, bloom) * 0.01f,
-            0f
-        );
+        cam = Camera.main;
 
-        Ray cameraRay = cam.ViewportPointToRay(viewport);
-
-        Vector3 targetPoint;
-
-        if (Physics.Raycast(cameraRay, out RaycastHit cameraHit, range))
-            targetPoint = cameraHit.point;
-        else
-            targetPoint = cameraRay.origin + cameraRay.direction * range;
-
-        Vector3 direction =
-            (targetPoint - muzzlePoint.position).normalized;
-
-        Ray muzzleRay =
-            new Ray(muzzlePoint.position, direction);
-
-        if (Physics.Raycast(muzzleRay, out RaycastHit hit, range))
+        // 念のための保険
+        if (cam == null)
         {
-            effects.SpawnHitEffect(hit);
+            Debug.LogError("Camera.main が見つかってない");
+        }
+    }
 
-            Target target =
-                hit.collider.GetComponentInParent<Target>();
+    public bool Shoot(out RaycastHit hit)
+    {
+        Debug.Log("Ray飛んでる"); // ←追加
 
-            if (target != null)
-                target.TakeDamage(1);
-            else
-                effects.SpawnBulletHole(hit);
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
-            return hit.point;
+        if (Physics.Raycast(ray, out hit, range))
+        {
+            Debug.Log("Hit!");
+            return true;
         }
 
-        return muzzleRay.origin +
-               muzzleRay.direction * range;
+        return false;
     }
 }

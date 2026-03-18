@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class AmmoUI : MonoBehaviour
 {
-    [Header("Gun")]
-    [SerializeField] Gun gun;
+    [Header("Gun Manager")]
+    [SerializeField] GunManager gunManager;
 
     [Header("Numbers")]
     [SerializeField] Sprite[] numbers;
@@ -20,13 +20,13 @@ public class AmmoUI : MonoBehaviour
 
     void Update()
     {
-        if (gun == null)
-            return;
+        Gun gun = gunManager.GetCurrentGun();
+        if (gun == null) return;
 
-        if (numbers == null || numbers.Length < 10)
-            return;
+        int mag = gun.GetCurrentAmmo();
+        int reserve = gun.GetReserveAmmo();
 
-        UpdateAmmo(gun.GetCurrentAmmo(), gun.GetReserveAmmo());
+        UpdateAmmo(mag, reserve);
     }
 
     void UpdateAmmo(int mag, int reserve)

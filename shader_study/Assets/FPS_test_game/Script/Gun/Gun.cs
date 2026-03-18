@@ -1,143 +1,122 @@
 using UnityEngine;
 
-/// <summary>
-/// 銃のメイン制御
-/// </summary>
 public class Gun : MonoBehaviour
 {
-    enum FireMode
+    public enum FireMode
     {
         Semi,
         Auto
     }
 
     [Header("References")]
-    [SerializeField] Camera cam;
-    [SerializeField] Transform muzzlePoint;
+    GunAmmo ammo;
+    GunRaycast raycastSystem;
+    GunEffects effects;
+    GunRecoil recoil;
+    GunTracer tracer;
 
-    [Header("Modules")]
-    [SerializeField] GunAmmo ammo;
-    [SerializeField] GunRecoil recoil;
-    [SerializeField] GunRaycast raycastSystem;
-    [SerializeField] GunEffects effects;
-
-    [Header("Gun Settings")]
+    [Header("Fire Settings")]
     [SerializeField] FireMode fireMode = FireMode.Auto;
-    [SerializeField] float fireRate = 10f;
-    [SerializeField] float range = 100f;
-
-    [Header("Bloom")]
-    float bloom;
-    [SerializeField] float bloomIncrease = 0.15f;
-    [SerializeField] float bloomMax = 1.2f;
-    [SerializeField] float bloomRecovery = 3f;
+    [SerializeField] float fireRate = 5f;
 
     float nextFireTime;
 
     void Awake()
     {
-        if (cam == null)
-            cam = Camera.main;
-
-        if (ammo == null)
-            Debug.LogError("GunAmmo is missing", this);
-
-        if (recoil == null)
-            Debug.LogError("GunRecoil is missing", this);
-
-        if (raycastSystem == null)
-            Debug.LogError("GunRaycast is missing", this);
-
-        if (effects == null)
-            Debug.LogError("GunEffects is missing", this);
+        ammo = GetComponent<GunAmmo>();
+        raycastSystem = GetComponent<GunRaycast>();
+        effects = GetComponent<GunEffects>();
+        recoil = GetComponent<GunRecoil>();
+        tracer = GetComponent<GunTracer>();
     }
 
     void Update()
     {
-        HandleShootInput();
-        RecoverBloom();
-
-        if (Input.GetMouseButtonUp(0))
-            recoil.ResetRecoil();
-
-        if (Input.GetKeyDown(KeyCode.R))
-            ammo.Reload();
+        HandleShoot();
+        HandleReload();
     }
 
-    void HandleShootInput()
+    void HandleShoot()
     {
+        if (ammo == null) return;
+        if (ammo.IsReloading()) return;
+
+        if (!ammo.CanShoot())
+        {
+            ammo.Reload();
+            return;
+        }
+
         switch (fireMode)
         {
             case FireMode.Semi:
-                if (Input.GetMouseButtonDown(0))
-                    TryShoot();
+                if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
+                {
+                    nextFireTime = Time.time + 1f / fireRate;
+                    Shoot();
+                }
                 break;
 
             case FireMode.Auto:
-                if (Input.GetMouseButton(0))
-                    TryShoot();
+                if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
+                {
+                    nextFireTime = Time.time + 1f / fireRate;
+                    Shoot();
+                }
                 break;
         }
     }
 
-    void TryShoot()
+    void HandleReload()
     {
-        if (!ammo.CanShoot())
+        if (Input.GetKeyDown(KeyCode.R))
         {
-        if (!ammo.IsReloading())
-            ammo.Reload();
-
-            return;
+            if (ammo != null)
+                ammo.Reload();
         }
-
-        if (Time.time < nextFireTime)
-            return;
-
-        nextFireTime = Time.time + 1f / fireRate;
-
-        Shoot();
     }
 
     void Shoot()
     {
-        ammo.ConsumeAmmo();
+        if (ammo == null || raycastSystem == null || effects == null || tracer == null || recoil == null)
+        {
+            Debug.LogError("参照が足りない！");
+            return;
+        }
 
-        recoil.ApplyRecoil();
+        ammo.UseAmmo();
 
-        ApplyBloom();
-
-        Vector3 hitPoint = raycastSystem.Fire(
-            cam,
-            muzzlePoint,
-            range,
-            bloom,
-            effects
-        );
+        RaycastHit hit;
+        bool didHit = raycastSystem.Shoot(out hit);
 
         effects.PlayMuzzleFlash();
-        effects.SpawnTracer(hitPoint);
+        tracer.Play();
+
+        if (didHit)
+        {
+            effects.SpawnHitEffect(hit);
+            effects.SpawnBulletHole(hit);
+
+            //  ここが修正の本体（親からTarget取得）
+            Target target = hit.collider.GetComponentInParent<Target>();
+
+            if (target != null)
+            {
+                Debug.Log("ダメージ入った！");
+                target.TakeDamage(1);
+            }
+        }
+
+        recoil.AddRecoil();
     }
 
-    void ApplyBloom()
-    {
-        bloom = Mathf.Min(bloom + bloomIncrease, bloomMax);
-    }
-
-    void RecoverBloom()
-    {
-        bloom = Mathf.MoveTowards(
-            bloom,
-            0f,
-            bloomRecovery * Time.deltaTime
-        );
-    }
     public int GetCurrentAmmo()
     {
-        return ammo.GetCurrentAmmo();
+        return ammo != null ? ammo.GetCurrentAmmo() : 0;
     }
 
     public int GetReserveAmmo()
     {
-        return ammo.GetReserveAmmo();
+        return ammo != null ? ammo.GetReserveAmmo() : 0;
     }
 }
